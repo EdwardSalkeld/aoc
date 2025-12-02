@@ -45,9 +45,6 @@ def check_item(item_id: int) -> bool:
         return True
     sequence_lenth = int(len(item) / 2)
     if item[:sequence_lenth] == item[sequence_lenth : sequence_lenth * 2]:
-        # print(
-        #     f"DBG: {item} is invalid, repeated sequence {item[:sequence_lenth]} found"
-        # )
         return False
     return True
 
@@ -66,7 +63,7 @@ def check_item_part2(item_id: int) -> bool:
 
         sequences_to_check = len(item) / sequence_length
         sequences = set()
-        for i in range(int(sequences_to_check) - 1):
+        for i in range(int(sequences_to_check)):
             sequence = item[i * sequence_length : (i + 1) * sequence_length]
             sequences.add(sequence)
         if len(sequences) == 1:
