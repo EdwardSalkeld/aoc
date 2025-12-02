@@ -37,16 +37,24 @@ def check_item(item_id: int) -> bool:
     if len(set(item)) == len(item):
         return True
 
-    max_length_sequence = len(item) / 2
-    for sequence_length in range(1, int(max_length_sequence) + 1):
-        for start in range(len(item) - 2 * sequence_length + 1):
-            sequence = item[start : start + sequence_length]
-            next_sequence = item[start + sequence_length : start + 2 * sequence_length]
-            # print(f"DBG: checking {item}. S1[{sequence}] S2[{next_sequence}]")
-            if sequence == next_sequence:
-                if sequence_length > 1:
-                    print(f"DBG: {item} is invalid, repeated sequence {sequence} found")
-                return False
+    if int(len(item)) % 2 == 1:
+        return True
+    sequence_lenth = int(len(item) / 2)
+    if item[:sequence_lenth] == item[sequence_lenth : sequence_lenth * 2]:
+        print(
+            f"DBG: {item} is invalid, repeated sequence {item[:sequence_lenth]} found"
+        )
+        return False
+    # max_length_sequence = len(item) / 2
+    # for sequence_length in range(1, int(max_length_sequence) + 1):
+    #     for start in range(len(item) - 2 * sequence_length + 1):
+    #         sequence = item[start : start + sequence_length]
+    #         next_sequence = item[start + sequence_length : start + 2 * sequence_length]
+    #         # print(f"DBG: checking {item}. S1[{sequence}] S2[{next_sequence}]")
+    #         if sequence == next_sequence:
+    #             if sequence_length > 1:
+    #                 print(f"DBG: {item} is invalid, repeated sequence {sequence} found")
+    #             return False
     return True
 
 
