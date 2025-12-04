@@ -37,7 +37,7 @@ class TestExample(unittest.TestCase):
         answer = solve.solve()
         self.assertEqual(answer, EXAMPLE_ANSWER)
         answer_part2 = solve.solve(part=2)
-        self.assertEqual(answer_part2, 0)
+        self.assertEqual(answer_part2, 43)
 
     def test_process_input(self):
         test_in = """

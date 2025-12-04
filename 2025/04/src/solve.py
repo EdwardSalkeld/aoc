@@ -4,7 +4,8 @@ def solve(part: int = 1) -> int:
     if part == 1:
         pass
         return solve_part_one(arr_input)
-    answer = 0
+    if part == 2:
+        return solve_part_two(arr_input)
     return 0
 
 
@@ -19,22 +20,24 @@ def process_input(raw_input: list[str]) -> list[list[int]]:
 
 def solve_part_one(arr: list[list[int]]) -> int:
     answer = 0
-    pretty = "\n"
     neigghbor_counts = count_neightbors(arr)
-    for markers, counts in zip(arr, neigghbor_counts):
-        for marker, count in zip(markers, counts):
+    for i1, (markers, counts) in enumerate(zip(arr, neigghbor_counts)):
+        for i2m, (marker, count) in enumerate(zip(markers, counts)):
             available = (marker == 1) and (count < 4)
             if available:
                 answer += 1
-                pretty += "x"
-            elif marker == 1:
-                pretty += "@"
-            else:
-                pretty += "."
-        pretty += "\n"
+                arr[i1][i2m] = 0  # remove the object
 
-    print(pretty)
     return answer
+
+
+def solve_part_two(arr: list[list[int]]) -> int:
+    running_total = 0
+    step_total = solve_part_one(arr)
+    while step_total > 0:
+        running_total += step_total
+        step_total = solve_part_one(arr)
+    return running_total
 
 
 def count_neightbors(arr: list[list[int]]) -> list[list[int]]:
