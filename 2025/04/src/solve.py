@@ -1,11 +1,11 @@
-def solve(part: int = 1) -> int:
+def solve(part: int = 1, optimised=False) -> int:
     raw_input = read_input()
     arr_input = process_input(raw_input)
     if part == 1:
         pass
-        return solve_part_one(arr_input)
+        return solve_part_one(arr_input, optimised)
     if part == 2:
-        return solve_part_two(arr_input)
+        return solve_part_two(arr_input, optimised)
     return 0
 
 
@@ -18,9 +18,12 @@ def process_input(raw_input: list[str]) -> list[list[int]]:
     return matrix
 
 
-def solve_part_one(arr: list[list[int]]) -> int:
+def solve_part_one(arr: list[list[int]], optimised: bool = False) -> int:
     answer = 0
-    neigghbor_counts = count_neightbors(arr)
+    if optimised:
+        neigghbor_counts = alt_count_neightbors(arr)
+    else:
+        neigghbor_counts = count_neightbors(arr)
     for i1, (markers, counts) in enumerate(zip(arr, neigghbor_counts)):
         for i2m, (marker, count) in enumerate(zip(markers, counts)):
             available = (marker == 1) and (count < 4)
@@ -31,7 +34,7 @@ def solve_part_one(arr: list[list[int]]) -> int:
     return answer
 
 
-def solve_part_two(arr: list[list[int]]) -> int:
+def solve_part_two(arr: list[list[int]], optimised: bool = False) -> int:
     running_total = 0
     step_total = solve_part_one(arr)
     while step_total > 0:
@@ -71,18 +74,30 @@ def count_neightbors(arr: list[list[int]]) -> list[list[int]]:
                     if x < max_x:
                         prev_row[x + 1] += 1  # down-right:w
     return counters
-    # # corners are always fine
-    # corners = sum([arr[0][0], arr[0][max_y], arr[max_x][0], arr[max_x][max_y]])
-    #
-    # # edges need sweeping
-    # return 0
+
+
+def alt_count_neightbors(arr: list[list[int]]) -> list[list[int]]:
+    max_y = len(arr)
+    max_x = len(arr[0])
+    counters = [[0 for x in row] for row in arr]
+    for y, row in enumerate(arr):
+        for x, col in enumerate(row):
+            sub_arr = [
+                inner[max(0, x - 1) : 1 + min(x + 1, max_x)]
+                for inner in arr[max(0, y - 1) : 1 + min(y + 1, max_y)]
+            ]
+            neighbours = sum([sum(item) for item in sub_arr]) - col
+            counters[y][x] = neighbours
+    return counters
 
 
 def main() -> None:
     part_one = solve()
     print(f"Part One: {part_one}")
     part_two = solve(part=2)
+    part_two_o = solve(part=2, optimised=True)
     print(f"Part Two: {part_two}")
+    print(f"Part Two: {part_two_o}")
 
 
 def read_input() -> list[str]:

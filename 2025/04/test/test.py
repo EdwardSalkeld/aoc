@@ -38,6 +38,10 @@ class TestExample(unittest.TestCase):
         self.assertEqual(answer, EXAMPLE_ANSWER)
         answer_part2 = solve.solve(part=2)
         self.assertEqual(answer_part2, 43)
+        answer = solve.solve(optimised=True)
+        self.assertEqual(answer, EXAMPLE_ANSWER)
+        answer_part2 = solve.solve(part=2, optimised=True)
+        self.assertEqual(answer_part2, 43)
 
     def test_process_input(self):
         test_in = """
@@ -66,6 +70,8 @@ class TestExample(unittest.TestCase):
             [2, 3, 2, 1],
         ]
         solved = solve.count_neightbors(test_in)
+        self.assertEqual(solved, test_out)
+        solved = solve.alt_count_neightbors(test_in)
         self.assertEqual(solved, test_out)
 
     def test_solve_part_one(self):
