@@ -22,10 +22,9 @@ EXAMPLE_ANSWER = 3
 class TestExample(unittest.TestCase):
     @patch("src.solve.read_input", return_value=EXAMPLE_INPUT)
     def test_final_answer(self, _mock):
-        answer = solve.solve()
-        self.assertEqual(answer, EXAMPLE_ANSWER)
-        answer_part2 = solve.solve(part=2)
-        self.assertEqual(answer_part2, 0)
+        answer1, answer2 = solve.solve()
+        self.assertEqual(answer1, EXAMPLE_ANSWER)
+        self.assertEqual(answer2, 14)
 
     def test_contiguous_ranges_merge(self):
         n = solve.SafeRange(0, 0, None)
@@ -45,3 +44,18 @@ class TestExample(unittest.TestCase):
         n.print()
         self.assertEqual(n.next.start, 10)
         self.assertEqual(n.next.end, 49)
+
+    def test_collect_length(self):
+        n = solve.SafeRange(0, 0, None)
+        n = solve.add_node(n, 10, 19)
+        n = solve.add_node(n, 30, 39)
+        n = solve.add_node(n, 50, 59)
+        self.assertEqual(n.collect_length(), 30)
+
+    def test_matching_starts(self):
+        n = solve.SafeRange(0, 0, None)
+        n = solve.add_node(n, 10, 19)
+        n = solve.add_node(n, 30, 39)
+        n = solve.add_node(n, 50, 59)
+        n = solve.add_node(n, 30, 44)
+        self.assertEqual(n.collect_length(), 35)

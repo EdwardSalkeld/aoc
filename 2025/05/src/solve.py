@@ -12,6 +12,15 @@ class SafeRange:
         if self.next:
             self.next.print()
 
+    def collect_length(self) -> int:
+        length = self.end - self.start + 1
+        # special dummy node at start!
+        if self.end == 0:
+            length = 0
+        if self.next:
+            length += self.next.collect_length()
+        return length
+
 
 def add_node(root: SafeRange, start: int, end: int) -> SafeRange:
     if start < root.start:
@@ -23,7 +32,7 @@ def add_node(root: SafeRange, start: int, end: int) -> SafeRange:
         else:
             safe_next = root
         return SafeRange(start, safe_end, safe_next)
-    elif start > root.start and start - 1 <= root.end:
+    elif start >= root.start and start - 1 <= root.end:
         # overlapping range. we extend
         extend_node(root, end)
     elif root.next:
@@ -61,14 +70,8 @@ def add_range(tree: SafeRange | None, line: str):
     return add_node(tree, start, end)
 
 
-def solve(part: int = 1) -> int:
+def solve(part: int = 1) -> tuple[int, int]:
     raw_input = read_input()
-    if part == 1:
-        return solve_part_one(raw_input)
-    return 0
-
-
-def solve_part_one(raw_input: str) -> int:
     fresh_count = 0
     raw_lines = raw_input.strip().splitlines()
 
@@ -84,7 +87,7 @@ def solve_part_one(raw_input: str) -> int:
             value = int(line)
             if test_value(tree, value):
                 fresh_count += 1
-    return fresh_count
+    return fresh_count, tree.collect_length()
 
 
 def test_value(tree: SafeRange, value: int) -> bool:
@@ -98,9 +101,8 @@ def test_value(tree: SafeRange, value: int) -> bool:
 
 
 def main() -> None:
-    part_one = solve()
+    part_one, part_two = solve()
     print(f"Part One: {part_one}")
-    part_two = solve(part=2)
     print(f"Part Two: {part_two}")
 
 
