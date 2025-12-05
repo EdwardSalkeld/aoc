@@ -3,7 +3,7 @@
 all: run test
 
 run:
-	python3 src/solve.py
+	uv run python src/solve.py
 
 test:
-	python3 -m unittest test.test
+	uv run python -m unittest test.test
