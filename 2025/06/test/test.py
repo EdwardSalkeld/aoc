@@ -10,7 +10,7 @@ EXAMPLE = """
 """
 
 ANSWER1 = 4277556
-ANSWER2 = 0
+ANSWER2 = 3263827
 
 
 class TestExample(unittest.TestCase):
