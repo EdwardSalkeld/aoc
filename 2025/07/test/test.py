@@ -31,7 +31,7 @@ class TestExample(unittest.TestCase):
         answer = solve.solve()
         self.assertEqual(answer, ANSWER1)
 
-    # @patch("src.solve.read_input", return_value=list(EXAMPLE))
-    # def test_final_answer_2(self, _mock):
-    #     answer_part2 = solve.solve(part=2)
-    #     self.assertEqual(answer_part2, ANSWER2)
+    @patch("src.solve.read_input", return_value=list(EXAMPLE))
+    def test_final_answer_2(self, _mock):
+        answer_part2 = solve.solve(part=2)
+        self.assertEqual(answer_part2, ANSWER2)

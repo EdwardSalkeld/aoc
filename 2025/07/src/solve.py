@@ -42,6 +42,8 @@ def melge(beams: list[Beam]) -> list[Beam]:
         beam = beams_at_col[0]
         beam.melge_val = sum([b.melge_val for b in beams_at_col])
         melged.append(beam)
+        for other in beams_at_col[1:]:
+            other.melge_val = 0
     return melged
 
 
@@ -52,37 +54,30 @@ def solve(part: int = 1) -> int:
     initial = Beam(first_line.index("S"))
     beams.append(initial)
     for line in raw_input:
-        # print(line)
         new_beams = []
         for beam in beams:
             new_beams.extend(beam.feed(line))
-            # print(f"beam on {beam.col_ix} becomes {len(beam.splits)}")
-            # print(f"bew beam length: {len(new_beams)}")
         beams = melge(new_beams)
-        # print(f"after melge: {len(beams)} beams")
 
         debug_line = list(line)
         for beam in beams:
             debug_line[beam.col_ix] = "|"
-            # print(f"{debug_line} after updating for beam at {beam.col_ix}")
         print_ln = "".join(debug_line)
         print_ln += f" -> {initial.collect_count()}"
         print(print_ln)
-        # print("\n")
 
-    answer = initial.collect_count()
+    if part == 1:
+        return initial.collect_count()
     if part == 2:
-        # part one is count the split, part 2 is count the paths.
-        # 1 split is 2 paths. 2 splits is 3 paths
-        answer += 1
-    return answer
+        return initial.collect_melge_val()
+    return 0
 
 
 def main() -> None:
     part_one = solve()
     print(f"Part One: {part_one}")  # 1499
     part_two = solve(part=2)
-    print(f"Part Two: {part_two}")
+    print(f"Part Two: {part_two}")  # 24743903847942
 
 
 def read_input() -> list[str]:
