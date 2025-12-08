@@ -27,7 +27,7 @@ EXAMPLE = """
 """.strip().splitlines()
 
 ANSWER1 = 40
-ANSWER2 = 0
+ANSWER2 = 25272
 
 
 class TestExample(unittest.TestCase):
