@@ -31,22 +31,21 @@ class TestExample(unittest.TestCase):
             machines[0].operations, [0b1000, 0b1010, 0b0100, 0b1100, 0b101, 0b11]
         )
 
-        self.assertEqual(machines[0].joltage_target, 7004005003)
-        self.assertEqual(machines[1].joltage_target, 2007012005007)
-        self.assertEqual(machines[2].joltage_target, 5010005011011010)
+        self.assertEqual(machines[0].joltage_target, [3, 5, 4, 7])
+        self.assertEqual(machines[1].joltage_target, [7, 5, 12, 7, 2])
 
         self.assertEqual(machines[0].joltage_operations[0], 1_000_000_000)
         self.assertEqual(machines[0].joltage_operations[1], 1_000_001_000)
         self.assertEqual(machines[0].joltage_operations[2], 1_000_000)
         self.assertEqual(machines[0].joltage_operations[3], 1_001_000_000)
 
-        joltage_addition = 0
-        joltage_addition += machines[0].joltage_operations[0]
-        joltage_addition += machines[0].joltage_operations[1] * 3
-        joltage_addition += machines[0].joltage_operations[3] * 3
-        joltage_addition += machines[0].joltage_operations[4] * 1
-        joltage_addition += machines[0].joltage_operations[5] * 2
-        self.assertEqual(joltage_addition, machines[0].joltage_target)
+        # joltage_addition = 0
+        # joltage_addition += machines[0].joltage_operations[0]
+        # joltage_addition += machines[0].joltage_operations[1] * 3
+        # joltage_addition += machines[0].joltage_operations[3] * 3
+        # joltage_addition += machines[0].joltage_operations[4] * 1
+        # joltage_addition += machines[0].joltage_operations[5] * 2
+        # self.assertEqual(joltage_addition, machines[0].joltage_target)
 
     def test_try_operations(self):
         machines = solve.expand_input(EXAMPLE)

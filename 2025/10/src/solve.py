@@ -1,9 +1,12 @@
+import scipy
+
+
 class Machine:
     def __init__(
         self,
         target_state: int,
         operations: list[int],
-        joltage_target: int,
+        joltage_target: list[int],
         joltage_operations: list[int],
     ):
         self.target_state = target_state
@@ -56,40 +59,40 @@ def try_operations(
 
 
 def solve_joltage(machine: Machine) -> int:
-    return try_joltage_operations(
-        machine.joltage_target, [0], machine.joltage_operations, 1
+    # so what we want is the joltage target
+    target = machine.joltage_target
+
+    # we can unpack the operations from binary
+    arr_opts: list[list[int]] = []
+    for i in range(len(target)):
+        arr_opt: list[int] = []
+        for opt in machine.operations:
+            if opt & 1 << i:
+                arr_opt.append(1)
+            else:
+                arr_opt.append(0)
+        arr_opts.append(arr_opt)
+
+    # and we want to minimise the attempts
+    equality = [1] * len(machine.operations)
+
+    # build an optimiser. integrality=1 means we want ints back
+    optimiser = scipy.optimize.linprog(
+        c=equality, integrality=1, A_eq=arr_opts, b_eq=target
     )
-
-
-def try_joltage_operations(
-    target: int, states: list[int], operations: list[int], depth: int
-) -> int:
-    while True:
-        print(f"Depth {depth}, States to explore: {len(states)}")
-        print(f"difference between target and min state = {target - min(states)}")
-        new_states = set()
-        for state in states:
-            for operation in operations:
-                new_state_val = state + operation
-                # print(
-                #     f"Depth={depth}, Current={state[0]}, Op={operation}, New={new_state_val}"
-                # )
-                if new_state_val == target:
-                    print(f"Found target {target:b} at depth {depth}")
-                    return depth
-                if new_state_val < target:
-                    new_states.add(new_state_val)
-        states = list(new_states)
-        depth += 1
+    if optimiser.status == 0:
+        return round(optimiser.fun)
 
 
 def expand_input(raw_input: list[str]) -> list[Machine]:
     machines = []
     for line in raw_input:
         parts = line.split(" ")
-        operations = []
-        joltage_operations = []
+        operations: list[int] = []
+        joltage_operations: list[int] = []
+        target: int = 0
         joltage = ""
+        joltage_target: list[int] = []
         for part in parts:
             if part.startswith("[") and part.endswith("]"):
                 lights = part[1:-1]
@@ -100,7 +103,7 @@ def expand_input(raw_input: list[str]) -> list[Machine]:
             elif part.startswith("(") and part.endswith(")"):
                 ops = part[1:-1].split(",")
                 operation = 0
-                joltage_operation = 0
+                joltage_operation: int = 0
                 for op in ops:
                     operation |= 1 << int(op)
                     joltage_operation += 10 ** (3 * int(op))
@@ -109,16 +112,7 @@ def expand_input(raw_input: list[str]) -> list[Machine]:
 
             elif part.startswith("{") and part.endswith("}"):
                 joltage = part[1:-1]
-                joltage_target = 0
-                for ix, counter_str in enumerate(joltage.split(",")):
-                    counter = int(counter_str)
-
-                    if counter > 999:
-                        raise ValueError("Counter too large")
-                    # print(
-                    #     f"Adding 3*{ix} ** 10 * {counter} = {10 ** (3 * ix) * counter}"
-                    # )
-                    joltage_target += 10 ** (3 * ix) * counter
+                joltage_target = [int(j) for j in joltage.split(",")]
 
         machine = Machine(target, operations, joltage_target, joltage_operations)
         # print("\n")
