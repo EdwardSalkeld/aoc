@@ -57,37 +57,30 @@ def try_operations(
 
 def solve_joltage(machine: Machine) -> int:
     return try_joltage_operations(
-        machine.joltage_target, [(0, [])], machine.joltage_operations, 1
+        machine.joltage_target, [0], machine.joltage_operations, 1
     )
 
 
 def try_joltage_operations(
-    target: int, states: list[StateTrace], operations: list[int], depth: int
+    target: int, states: list[int], operations: list[int], depth: int
 ) -> int:
-    new_states = {}
-    print(f"Depth {depth}, States to explore: {len(states)}")
-    print(
-        f"difference between target and min state = {target - min(s[0] for s in states)}"
-    )
-    for state in states:
-        for operation in operations:
-            new_state_val = state[0] + operation
-            state_stack = list(state[1])
-            state_stack.append(operation)
-            # print(
-            #     f"Depth={depth}, Current={state[0]}, Op={operation}, New={new_state_val}"
-            # )
-            new_state = (new_state_val, state_stack)
-            if new_state_val == target:
-                print(
-                    f"Found target {target:b} at depth {depth} with operations {state_stack}"
-                )
-                return depth
-            if new_state_val < target:
-                new_states[new_state_val] = new_state
-    return try_joltage_operations(
-        target, list(new_states.items()), operations, depth + 1
-    )
+    while True:
+        print(f"Depth {depth}, States to explore: {len(states)}")
+        print(f"difference between target and min state = {target - min(states)}")
+        new_states = set()
+        for state in states:
+            for operation in operations:
+                new_state_val = state + operation
+                # print(
+                #     f"Depth={depth}, Current={state[0]}, Op={operation}, New={new_state_val}"
+                # )
+                if new_state_val == target:
+                    print(f"Found target {target:b} at depth {depth}")
+                    return depth
+                if new_state_val < target:
+                    new_states.add(new_state_val)
+        states = list(new_states)
+        depth += 1
 
 
 def expand_input(raw_input: list[str]) -> list[Machine]:
