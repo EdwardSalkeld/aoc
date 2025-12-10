@@ -10,8 +10,9 @@ def solve(part: int = 1) -> int:
         # return largest_area[0]
         return calculate_largest_area(list(coords), None, None)
     if part == 2:
-        safe_space = calculate_safe_space(coords)
-        x_to_keystones = calculate_vertices(safe_space)
+        create_compression_mappping(coords)
+        safe_space = calculate_safe_space(coords)  # mapped!
+        x_to_keystones = calculate_vertices(safe_space)  # mapped!
         return calculate_largest_area(list(coords), safe_space, x_to_keystones)
     return 0
 
@@ -26,6 +27,26 @@ def expand_input(raw_input: list[str]) -> list[tuple[int, int]]:
 
 type Coordinate = tuple[int, int]
 type Rectangle = tuple[int, int, int, int]  # x1, y1, x2, y2
+
+x_compression_map = {}
+y_compression_map = {}
+
+
+def map_coordinate(coord: Coordinate) -> Coordinate:
+    return (x_compression_map[coord[0]], y_compression_map[coord[1]])
+
+
+def create_compression_mappping(coords: list[Coordinate]):
+    xs = sorted(set(coord[0] for coord in coords))
+    ys = sorted(set(coord[1] for coord in coords))
+    current = 1
+    for x in xs:
+        x_compression_map[x] = current
+        current += 2  # leave space for gaps
+    current = 1
+    for y in ys:
+        y_compression_map[y] = current
+        current += 2  # leave space for gaps
 
 
 def calculate_areas(coords: list[Coordinate]) -> list[tuple[int, Rectangle]]:
@@ -63,12 +84,18 @@ def calculate_largest_area(
         return areas[0][0]
     unsafe = set()
     for ix, area in enumerate(areas):
-        if check_area_safe(area[1], area[2], safe_space, x_to_keystones, unsafe):
+        if check_area_safe(
+            map_coordinate(area[1]),
+            map_coordinate(area[2]),
+            safe_space,
+            x_to_keystones,
+            unsafe,
+        ):
             largest_area = area[0]
             return largest_area
-        print(
-            f"{ix + 1}/{len(areas)} checked, largest safe area so far: {largest_area}"
-        )
+        # print(
+        #     f"{ix + 1}/{len(areas)} checked, largest safe area so far: {largest_area}"
+        # )
     return largest_area
 
 
@@ -146,7 +173,7 @@ def print_safe(safe_space: set[Coordinate]):
 
 def calculate_safe_space(coords: list[Coordinate]) -> set[Coordinate]:
     safe_space = set()
-    coords = list(coords)
+    coords = [map_coordinate(c) for c in coords]
     coords.append(coords[0])
     for first, second in itertools.pairwise(coords):
         if first[0] == second[0]:
