@@ -2,7 +2,7 @@
 
 help:
 	@echo "make run   solve both parts against ./input"
-	@echo "make test  check solve() against the example in test/test.py"
+	@echo "make test  check solve() against ./example and ./answer1, ./answer2"
 	@echo "make tidy  format and lint-fix this day"
 	@echo "make all   tidy, run, then test"
 
